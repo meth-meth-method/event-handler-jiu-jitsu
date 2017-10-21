@@ -64,14 +64,19 @@
         </div>
 
         <script>
-            let prevEvent;
-            scrollable.addEventListener('mousemove', event => {
-                event.preventDefault();
-                if (prevEvent && event.buttons === 1) {
-                    scrollable.scrollLeft -= event.clientX - prevEvent.clientX;
-                }
-                prevEvent = event;
-            });
+            function scrollHandler(element) {
+                let prevEvent;
+                return function eventHandler(event) {
+                    event.preventDefault();
+                    if (prevEvent && event.buttons === 1) {
+                        element.scrollLeft -= event.clientX - prevEvent.clientX;
+                        element.scrollTop -= event.clientY - prevEvent.clientY;
+                    }
+                    prevEvent = event;
+                };
+            }
+
+            scrollable.addEventListener('mousemove', scrollHandler(scrollable));
         </script>
     </body>
 </html>
