@@ -33,7 +33,7 @@
     </head>
     <body>
         <div id="scrollable">
-            <ul>
+            <ul id="items">
                 <li>A</li>
                 <li>B</li>
                 <li>C</li>
@@ -83,8 +83,8 @@
                 };
             }
 
-            scrollable.addEventListener('mousemove', scrollMiddleWare(({x, y}) => {
-                scrollable.scrollLeft -= x;
+            scrollable.addEventListener('mousemove', scrollMiddleWare(delta => {
+                items.style.left = `${delta.x}px`;
             }));
         </script>
     </body>
