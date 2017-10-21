@@ -64,19 +64,28 @@
         </div>
 
         <script>
-            function scrollHandler(element) {
+            function scrollMiddleWare(callback) {
+                const delta = {
+                    x: null,
+                    y: null,
+                };
+
                 let prevEvent;
+
                 return function eventHandler(event) {
                     event.preventDefault();
                     if (prevEvent && event.buttons === 1) {
-                        element.scrollLeft -= event.clientX - prevEvent.clientX;
-                        element.scrollTop -= event.clientY - prevEvent.clientY;
+                        delta.x = event.clientX - prevEvent.clientX;
+                        delta.y = event.clientY - prevEvent.clientY;
+                        callback(delta);
                     }
                     prevEvent = event;
                 };
             }
 
-            scrollable.addEventListener('mousemove', scrollHandler(scrollable));
+            scrollable.addEventListener('mousemove', scrollMiddleWare(({x, y}) => {
+                scrollable.scrollLeft -= x;
+            }));
         </script>
     </body>
 </html>
