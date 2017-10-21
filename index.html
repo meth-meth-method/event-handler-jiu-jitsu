@@ -34,7 +34,7 @@
     </head>
     <body>
         <div id="scrollable">
-            <ul>
+            <ul id="items">
                 <li>A</li>
                 <li>B</li>
                 <li>C</li>
@@ -65,6 +65,76 @@
         </div>
 
         <script>
+            function scrollMiddleWare(element, multiplier = 1, inertia = 0.95) {
+                const delta = {
+                    x: null,
+                    y: null,
+                };
+
+                const abs = {
+                    x: 0,
+                    y: 0,
+                };
+
+                return function onScroll(callback) {
+                    let prevEvent;
+                    let requestId;
+                    let button;
+
+                    function stop() {
+                        cancelAnimationFrame(requestId);
+                        requestId = null;
+                    }
+
+                    function queue() {
+                        requestId = requestAnimationFrame(update);
+                    }
+
+                    function update() {
+                        console.log('updating');
+                        delta.x *= inertia;
+                        delta.y *= inertia;
+                        notify();
+
+                        if (Math.abs(delta.x) + Math.abs(delta.y) > 0.1) {
+                            queue();
+                        }
+                    }
+
+
+                    function notify() {
+                        abs.x += delta.x;
+                        abs.y += delta.y;
+                        callback({abs, delta});
+                    }
+
+                    function eventHandler(event) {
+                        if (prevEvent && button === 0) {
+                            delta.x = event.clientX - prevEvent.clientX;
+                            delta.y = event.clientY - prevEvent.clientY;
+                            delta.x *= multiplier;
+                            delta.y *= multiplier;
+                            stop();
+                            notify();
+                        }
+
+                        if (!requestId && event.buttons !== 1) {
+                            queue();
+                        }
+
+                        prevEvent = event;
+                    }
+
+                    element.addEventListener('mousemove', eventHandler);
+                    element.addEventListener('mousedown', event => button = event.button);
+                    element.addEventListener('mouseup', () => button = -1);
+                    element.addEventListener('mouseleave', () => button = -1);
+                }
+            }
+
+            scrollMiddleWare(scrollable)(scroll => {
+                items.style.left = `${scroll.abs.x}px`;
+            });
         </script>
     </body>
 </html>
