@@ -64,6 +64,13 @@
         </div>
 
         <script>
+            let prevEvent;
+            scrollable.addEventListener('mousemove', event => {
+                if (prevEvent) {
+                    scrollable.scrollLeft -= event.clientX - prevEvent.clientX;
+                }
+                prevEvent = event;
+            });
         </script>
     </body>
 </html>
