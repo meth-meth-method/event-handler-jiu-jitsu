@@ -65,6 +65,11 @@
 
         <script>
             function scrollMiddleWare(callback) {
+                const abs = {
+                    x: 0,
+                    y: 0,
+                };
+
                 const delta = {
                     x: null,
                     y: null,
@@ -77,14 +82,16 @@
                     if (prevEvent && event.buttons === 1) {
                         delta.x = event.clientX - prevEvent.clientX;
                         delta.y = event.clientY - prevEvent.clientY;
-                        callback(delta);
+                        abs.x += delta.x;
+                        abs.y += delta.y;
+                        callback({abs, delta});
                     }
                     prevEvent = event;
                 };
             }
 
-            scrollable.addEventListener('mousemove', scrollMiddleWare(delta => {
-                items.style.left = `${delta.x}px`;
+            scrollable.addEventListener('mousemove', scrollMiddleWare(scroll => {
+                items.style.left = `${scroll.abs.x}px`;
             }));
         </script>
     </body>
