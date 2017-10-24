@@ -64,7 +64,7 @@
         </div>
 
         <script>
-            function scrollMiddleWare(inertia, callback) {
+            function scrollMiddleWare(inertia = 0.9, callback) {
                 const abs = {
                     x: 0,
                     y: 0,
@@ -117,7 +117,7 @@
                 };
             }
 
-            scrollable.addEventListener('mousemove', scrollMiddleWare(0.96, scroll => {
+            scrollable.addEventListener('mousemove', scrollMiddleWare(undefined, scroll => {
                 items.style.left = `${scroll.abs.x}px`;
                 [...items.children].forEach((item, index) => {
                     item.style.transform = [
