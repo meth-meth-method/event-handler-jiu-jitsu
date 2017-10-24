@@ -66,6 +66,7 @@
         <script>
             let prevEvent;
             scrollable.addEventListener('mousemove', event => {
+                event.preventDefault();
                 if (prevEvent) {
                     scrollable.scrollLeft -= event.clientX - prevEvent.clientX;
                 }
