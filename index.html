@@ -64,7 +64,7 @@
         </div>
 
         <script>
-            function scrollMiddleWare(inertia = 0.9, callback) {
+            function scrollMiddleWare(inertia = 0.9) {
                 const abs = {
                     x: 0,
                     y: 0,
@@ -75,49 +75,51 @@
                     y: null,
                 };
 
-                let prevEvent;
-                let requestId;
+                return function onUpdate(callback) {
+                    let prevEvent;
+                    let requestId;
 
-                function stop() {
-                    cancelAnimationFrame(requestId);
-                    requestId = null
-                }
-
-                function queue() {
-                    requestId = requestAnimationFrame(update);
-                }
-
-                function update() {
-                    delta.x *= inertia;
-                    delta.y *= inertia;
-                    notify();
-                    queue();
-                }
-
-                function notify() {
-                    abs.x += delta.x;
-                    abs.y += delta.y;
-                    callback({abs, delta});
-                }
-
-                return function eventHandler(event) {
-                    event.preventDefault();
-                    if (prevEvent && event.buttons === 1) {
-                        delta.x = event.clientX - prevEvent.clientX;
-                        delta.y = event.clientY - prevEvent.clientY;
-                        stop();
-                        notify();
+                    function stop() {
+                        cancelAnimationFrame(requestId);
+                        requestId = null
                     }
 
-                    if (!requestId && event.buttons !== 1) {
+                    function queue() {
+                        requestId = requestAnimationFrame(update);
+                    }
+
+                    function update() {
+                        delta.x *= inertia;
+                        delta.y *= inertia;
+                        notify();
                         queue();
                     }
 
-                    prevEvent = event;
+                    function notify() {
+                        abs.x += delta.x;
+                        abs.y += delta.y;
+                        callback({abs, delta});
+                    }
+
+                    return function eventHandler(event) {
+                        event.preventDefault();
+                        if (prevEvent && event.buttons === 1) {
+                            delta.x = event.clientX - prevEvent.clientX;
+                            delta.y = event.clientY - prevEvent.clientY;
+                            stop();
+                            notify();
+                        }
+
+                        if (!requestId && event.buttons !== 1) {
+                            queue();
+                        }
+
+                        prevEvent = event;
+                    };
                 };
             }
 
-            scrollable.addEventListener('mousemove', scrollMiddleWare(undefined, scroll => {
+            scrollable.addEventListener('mousemove', scrollMiddleWare()(scroll => {
                 items.style.left = `${scroll.abs.x}px`;
                 [...items.children].forEach((item, index) => {
                     item.style.transform = [
