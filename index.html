@@ -64,7 +64,7 @@
         </div>
 
         <script>
-            function scrollMiddleWare(callback) {
+            function scrollMiddleWare(inertia, callback) {
                 const abs = {
                     x: 0,
                     y: 0,
@@ -88,8 +88,8 @@
                 }
 
                 function update() {
-                    delta.x *= 0.9;
-                    delta.y *= 0.9;
+                    delta.x *= inertia;
+                    delta.y *= inertia;
                     notify();
                     queue();
                 }
@@ -117,7 +117,7 @@
                 };
             }
 
-            scrollable.addEventListener('mousemove', scrollMiddleWare(scroll => {
+            scrollable.addEventListener('mousemove', scrollMiddleWare(0.96, scroll => {
                 items.style.left = `${scroll.abs.x}px`;
                 [...items.children].forEach((item, index) => {
                     item.style.transform = [
