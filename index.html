@@ -76,6 +76,21 @@
                 };
 
                 let prevEvent;
+                let requestId;
+
+                function stop() {
+                    cancelAnimationFrame(requestId);
+                    requestId = null
+                }
+
+                function queue() {
+                    requestId = requestAnimationFrame(update);
+                }
+
+                function update() {
+                    notify();
+                    queue();
+                }
 
                 function notify() {
                     abs.x += delta.x;
@@ -88,8 +103,14 @@
                     if (prevEvent && event.buttons === 1) {
                         delta.x = event.clientX - prevEvent.clientX;
                         delta.y = event.clientY - prevEvent.clientY;
+                        stop();
                         notify();
                     }
+
+                    if (!requestId && event.buttons !== 1) {
+                        queue();
+                    }
+
                     prevEvent = event;
                 };
             }
@@ -98,8 +119,8 @@
                 items.style.left = `${scroll.abs.x}px`;
                 [...items.children].forEach((item, index) => {
                     item.style.transform = [
-                        `rotateY(${scroll.abs.x / 20}deg)`,
-                        `rotateX(${scroll.abs.y}deg)`,
+                        //`rotateY(${scroll.abs.x / 20}deg)`,
+                        //`rotateX(${scroll.abs.y}deg)`,
                     ].join(' ');
                 });
             }));
