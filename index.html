@@ -93,7 +93,10 @@
             scrollable.addEventListener('mousemove', scrollMiddleWare(scroll => {
                 items.style.left = `${scroll.abs.x}px`;
                 [...items.children].forEach((item, index) => {
-                    item.style.transform = `rotateY(${scroll.abs.x / 20}deg)`;
+                    item.style.transform = [
+                        `rotateY(${scroll.abs.x / 20}deg)`,
+                        `rotateX(${scroll.abs.y}deg)`,
+                    ].join(' ');
                 });
             }));
         </script>
